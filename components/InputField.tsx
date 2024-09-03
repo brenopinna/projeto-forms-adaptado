@@ -1,5 +1,5 @@
 interface InputFieldProps {
-  labelText: string
+  label: string
   placeholder: string
   id: string
   type?: string
@@ -9,7 +9,7 @@ interface InputFieldProps {
 }
 
 export function InputField({
-  labelText,
+  label,
   placeholder,
   id,
   type,
@@ -20,7 +20,7 @@ export function InputField({
   return (
     <div className="grid gap-2 text-primary">
       <label className="text-xl text-left" htmlFor={id}>
-        {labelText}
+        {label}
       </label>
       <input
         className={`w-full focus:ring-1 ring-secondary placeholder:text-primary/50  border outline-none border-secondary rounded-md px-4 py-2 ${className}`}
