@@ -8,6 +8,7 @@ import { bff } from "@/lib/bff"
 import { useRouter } from "next/navigation"
 import { FormEventHandler, useState } from "react"
 import { Loader2 } from "lucide-react"
+import { Loading } from "@/components/Loading"
 
 interface LoginForm extends HTMLFormElement {
   user: HTMLInputElement
@@ -55,11 +56,7 @@ export function Login() {
           label="Senha:"
           placeholder="Digite sua senha"
         />
-        {loading ? (
-          <Loader2 size={32} className="text-primary animate-spin mx-auto" />
-        ) : (
-          <Button className="w-1/2">Enviar</Button>
-        )}
+        {loading ? <Loading /> : <Button className="w-1/2">Enviar</Button>}
         {invalid && (
           <p className="text-error text-xs text-left">
             O nome de usuário ou a senha estão incorretos. Tente novamente.
