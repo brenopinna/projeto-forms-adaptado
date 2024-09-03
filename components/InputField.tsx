@@ -23,7 +23,7 @@ export function InputField({
         {labelText}
       </label>
       <input
-        className={`w-full placeholder:text-primary/50  border outline-none border-secondary rounded-md px-4 py-2 ${className}`}
+        className={`w-full focus:ring-1 ring-secondary placeholder:text-primary/50  border outline-none border-secondary rounded-md px-4 py-2 ${className}`}
         type={type ?? "text"}
         name={name ?? id}
         required={required ?? true}
