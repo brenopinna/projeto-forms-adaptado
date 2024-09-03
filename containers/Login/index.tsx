@@ -5,9 +5,9 @@ import { Container } from "@/components/Container"
 import { InputField } from "@/components/InputField"
 import { Title } from "@/components/Title"
 import { bff } from "@/lib/bff"
-import { error } from "console"
 import { useRouter } from "next/navigation"
-import { FormEventHandler, useEffect, useState } from "react"
+import { FormEventHandler, useState } from "react"
+import { Loader2 } from "lucide-react"
 
 interface LoginForm extends HTMLFormElement {
   user: HTMLInputElement
@@ -16,15 +16,13 @@ interface LoginForm extends HTMLFormElement {
 
 export function Login() {
   const router = useRouter()
-  const [valid, setValid] = useState(true)
-  useEffect(() => {
-    console.log(valid)
-  }, [valid])
+  const [invalid, setInvalid] = useState(false)
+  const [loading, setLoading] = useState(false)
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault()
     const form: LoginForm = e.currentTarget as LoginForm
     const { user, password } = form
-    setValid(true)
+    setLoading(true)
     bff
       .post("/auth/login", {
         username: user.value,
@@ -35,28 +33,38 @@ export function Login() {
       })
       .catch((error) => {
         if (error.status === 404) {
-          setValid(false)
+          setInvalid(true)
+          user.focus()
         } else {
           alert("Ocorreu um erro ao submeter o formulário. Tente novamente.")
         }
+        setLoading(false)
       })
   }
   return (
-    <Container className="w-[424px] h-full pt-24 space-y-8 text-center">
+    <Container className="!w-[424px] h-full pt-24 space-y-8 text-center">
       <Title>Login</Title>
-      <form className="space-y-8" onSubmit={handleSubmit}>
-        <InputField
-          id="user"
-          labelText="Usuário:"
-          placeholder="Digite seu nome de usuário"
-        />
+      <form
+        className="space-y-8"
+        onChange={() => invalid && setInvalid(false)}
+        onSubmit={handleSubmit}>
+        <InputField id="user" label="Usuário:" placeholder="Digite seu nome de usuário" />
         <InputField
           type="password"
           id="password"
-          labelText="Senha:"
+          label="Senha:"
           placeholder="Digite sua senha"
         />
-        <Button className="w-1/2">Enviar</Button>
+        {loading ? (
+          <Loader2 size={32} className="text-primary animate-spin mx-auto" />
+        ) : (
+          <Button className="w-1/2">Enviar</Button>
+        )}
+        {invalid && (
+          <p className="text-error text-xs text-left">
+            O nome de usuário ou a senha estão incorretos. Tente novamente.
+          </p>
+        )}
       </form>
     </Container>
   )
