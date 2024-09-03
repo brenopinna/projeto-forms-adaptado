@@ -22,7 +22,7 @@ export function Login() {
   }, [valid])
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault()
-    const form: LoginForm = e.currentTarget.parentNode as LoginForm
+    const form: LoginForm = e.currentTarget as LoginForm
     const { user, password } = form
     setValid(true)
     bff
