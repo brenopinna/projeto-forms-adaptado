@@ -11,5 +11,6 @@ export interface FormResponse {
     submitText: string
     title: string
     description: string
+    operation: string
   }
 }
