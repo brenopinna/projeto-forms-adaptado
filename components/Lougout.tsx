@@ -11,7 +11,7 @@ export function Logout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const handleClick = async () => {
     setLoading(true)
-    bff
+    await bff
       .post("/logout")
       .then(() => router.push("/login"))
       .catch(() => setLoading(false))
@@ -19,12 +19,10 @@ export function Logout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <span
-        onClick={handleClick}
-        className="text-secondary underline hover:text-secondary/70 cursor-pointer">
+      <span onClick={handleClick} className="hover:opacity-70 cursor-pointer">
         {children}
       </span>
-      {!loading && (
+      {loading && (
         <div className="absolute grid place-items-center bg-blend-darken top-0 left-0 bg-black/50 w-full h-full">
           <Loading size={45} />
         </div>
