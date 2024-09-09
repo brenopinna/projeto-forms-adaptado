@@ -2,37 +2,39 @@
 
 import { InputField } from "@/components/InputField"
 import { Button } from "@/components/Button"
-import { FormResponse } from "../types/form-respose"
-import { Title } from "@/components/Title"
+import { FormResponseData } from "../types/form-response-data"
+import { useFormOutput } from "@/contexts/FormOutput"
+import { FormEvent } from "react"
 
-export function Form({ data }: FormResponse) {
+export function Form({
+  data,
+  className,
+}: {
+  data: FormResponseData
+  className?: string
+}) {
   const inputs = data.fields
+  const [_, setOutput] = useFormOutput()
 
-  let handleSubmit: Function
-  try {
-    handleSubmit = eval(data.operation)
-  } catch (error) {
-    return (
-      <span>
-        Houve um erro ao processar o formulário. Tente recarregar a página e, caso o erro
-        persista, contate o suporte técnico.
-      </span>
-    )
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    let operation: Function
+    try {
+      operation = eval(data.operation) //! TODO: SUBSTITUIR ISSO PRA ONTEM!!!!
+      setOutput(operation())
+    } catch (error) {
+      return (
+        <span>
+          Houve um erro ao processar o formulário. Tente recarregar a página e, caso o
+          erro persista, contate o suporte técnico.
+        </span>
+      )
+    }
   }
-  // TODO: contextAPI para ver o valor retornado pelo form.
-  // TODO: melhorar o desoign e incluir uma div de output.
-  // * Atualmente ele so da um log do resultado.
+
   return (
     <>
-      <div className="space-y-4">
-        <Title>{data.title}</Title>
-        <p>{data.description}</p>
-      </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault(), console.log(handleSubmit())
-        }}
-        className="space-y-8">
+      <form onSubmit={handleSubmit} className={`space-y-8 ${className}`}>
         {inputs.map((input) => {
           return <InputField key={`${input.name}${input.id}`} {...input} />
         })}

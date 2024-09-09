@@ -4,8 +4,11 @@ import { Form } from "./fragments/Form"
 import { cookies } from "next/headers"
 import jwt from "jsonwebtoken"
 import { api } from "@/lib/api"
-import { FormResponse } from "./types/form-respose"
+import { FormResponse } from "./types/form-response"
 import { Logout } from "@/components/Lougout"
+import { Output } from "./fragments/Output"
+import { Title } from "@/components/Title"
+import { FormOutputProvider } from "@/contexts/FormOutput"
 
 interface Payload {
   empresaId: string
@@ -35,7 +38,19 @@ export default async function Home() {
       <Header />
       <Container className="space-y-4">
         {ok && data ? (
-          <Form data={data} />
+          <>
+            <div className="space-y-4">
+              <Title>{data.title}</Title>
+              <p className="text-primary">{data.description}</p>
+              <hr className="border-secondary/30" />
+            </div>
+            <div className="grid grid-cols-2 gap-12">
+              <FormOutputProvider>
+                <Form data={data} />
+                <Output />
+              </FormOutputProvider>
+            </div>
+          </>
         ) : (
           <span>
             Houve um erro na autenticação do usuário.{" "}
