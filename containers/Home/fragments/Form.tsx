@@ -4,7 +4,11 @@ import { InputField } from "@/components/InputField"
 import { Button } from "@/components/Button"
 import { FormResponseData } from "../types/form-response-data"
 import { useFormOutput } from "@/contexts/FormOutput"
-import { FormEvent } from "react"
+import { FormEvent, useEffect, useState } from "react"
+import { api } from "@/lib/api"
+import { getJwtAndEmpresaIdFromCookies } from "@/actions/get-cookies"
+import { OutputType } from "@/types/output-type"
+import { Loading } from "@/components/Loading"
 
 export function Form({
   data,
@@ -15,13 +19,34 @@ export function Form({
 }) {
   const inputs = data.fields
   const [_, setOutput] = useFormOutput()
+  const [empresaId, setEmpresaId] = useState<string>()
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    getJwtAndEmpresaIdFromCookies().then(({ token, empresaId }) =>
+      setEmpresaId(empresaId),
+    )
+  }, [])
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    setLoading(true)
+    setOutput({})
     e.preventDefault()
-    let operation: Function
     try {
-      operation = eval(data.operation) //! TODO: SUBSTITUIR ISSO PRA ONTEM!!!!
-      setOutput(operation())
+      const formData = new FormData(e.currentTarget)
+      const reqBody = Object.fromEntries(formData.entries())
+      api
+        .post(`/submit/${empresaId}`, { ...reqBody })
+        .then((response) => {
+          setOutput(response.data as OutputType)
+          setLoading(false)
+        })
+        .catch((err) => {
+          setOutput({
+            Erro: err.response.data.message,
+          })
+          setLoading(false)
+        })
     } catch (error) {
       return (
         <span>
@@ -38,7 +63,7 @@ export function Form({
         {inputs.map((input) => {
           return <InputField key={`${input.name}${input.id}`} {...input} />
         })}
-        <Button>{data.submitText}</Button>
+        {loading ? <Loading /> : <Button>{data.submitText}</Button>}
       </form>
     </>
   )

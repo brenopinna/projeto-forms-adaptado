@@ -9,19 +9,14 @@ import { Logout } from "@/components/Lougout"
 import { Output } from "./fragments/Output"
 import { Title } from "@/components/Title"
 import { FormOutputProvider } from "@/contexts/FormOutput"
-
-interface Payload {
-  empresaId: string
-}
+import { getJwtAndEmpresaIdFromCookies } from "@/actions/get-cookies"
 
 export default async function Home() {
-  const token = cookies().get("auth-token")!.value
-  const decodedToken = jwt.decode(token) as Payload | null
   let response: FormResponse | null = null
   let ok = true
+  const { token, empresaId } = await getJwtAndEmpresaIdFromCookies()
   try {
-    if (decodedToken) {
-      const { empresaId } = decodedToken
+    if (empresaId) {
       response = await api.get(`/empresa/${empresaId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
